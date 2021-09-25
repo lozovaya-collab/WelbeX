@@ -1,30 +1,40 @@
-const express = require('express');
-const app = express();
-const mysql = require('mysql');
-const cors = require('cors');
+const express = require('express'); // подключаем экспресс для создания сервиса
+const app = express(); //  инициализируем сервер
+const mysql = require('mysql'); // подключаем бд
+const cors = require('cors'); // подключаем cors http://spring-projects.ru/understanding/cors/
 
-app.use(cors());
+app.use(cors()); // получается чтобы можно было к нему обращаться? я не поняла ахахаха 
+// Cross-origin resource sharing (CORS; с англ. — «совместное использование ресурсов между разными источниками»)
+// мы за безопасность 
 
+
+/* Драйвер mysql2 позволяет создавать пулы подключений. 
+Пулы подключений позволяют уменьшить время, затраченное на подключение к серверу MySQL, 
+благодаря повторному использованию подключений. 
+Когда баз данных посылается запрос, из пула выбиратся свобное подключение (или создается новое, если сводобных нет и не превышен лимит). 
+Это позволяет снизить издержки на создание новых подключений.
+
+Пул подключений создается с помощью функции createPool() */
 const db = mysql.createPool({
     host: 'localhost',
-    user: 'root',
-    password: 'Javac#14',
-    database: 'test'
+    user: 'root', // логин, пользователь, тип того
+    password: 'Javac#14', // пароль
+    database: 'test' // наша база данных
 });
 
-app.get('/test', (req, res) => {
-    db.query('SELECT * FROM table_for_test', (err, result) => {
-        if (err) {
+app.get('/test', (req, res) => { // делаем запрос к нашей бд
+    db.query('SELECT * FROM table_for_test', (err, result) => { // делаем выборку
+        if (err) { // если выбрасывается ошибка, то она у нас обрабатывается - логично? логично
             console.error(err);
             res.send("возникла ошибка выборки");
             return
         } else {
-            res.send(result);
+            res.send(result); // отправляем наш результат выборки 
         }
     });
 });
 
 
-app.listen(3210, () => {
+app.listen(3210, () => { // говорим какой порт слушает наш сервер, потом к нему и будет подключаться
     console.log('Server active in port 3210')
 });
